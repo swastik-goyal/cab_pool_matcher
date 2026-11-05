@@ -2,8 +2,16 @@ from colorama import init, Fore, Back, Style
 import sys
 import time
 from classes import Cab, RideRequest
+import os
+from readchar import readchar, key
+from utils import custom_input
 
 init(autoreset=True)
+
+def clear_screen(ask=True):
+    if ask:
+        input("\nPress Enter to return to the main menu...")
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def menu():
@@ -14,7 +22,8 @@ def menu():
 
 def get_action():
     menu()
-    action = int(input("\n\nEnter Option: "))
+    print("\n\nEnter Option: ")
+    action = int(readchar())
     print()
 
     if action > 3 or action < 1:
@@ -25,12 +34,17 @@ def get_action():
     return action
 
 def add_ride_request(retry=False):
+
+    print(Style.BRIGHT + Fore.LIGHTYELLOW_EX + "Hit escape to cancel this operation and return to main menu at any point of time.")
+
     if retry:
         print("Retrying adding new request...")
     else:
         print(Fore.GREEN + "Adding new ride request...")
 
-    name = input("Enter name of the student: ")
+    name = custom_input("Enter name of the student: ")
+    if not name:
+        return False
 
     print("Destinations: \n\t0: Delhi \n\t1: Jaipur")
     destination = int(input("Enter your Destination: "))
@@ -87,21 +101,27 @@ def print_all_requests():
 requests = []
 cabs = []
 
+clear_screen(ask=False)
+
 while True:
     action = get_action()
+
+    clear_screen(ask=False)
 
     if action == 3:
         print(Fore.GREEN + Style.BRIGHT + "Quitting APP....")
         sys.exit(0)
 
     if action == 1:
-        requests.append(add_ride_request())
+        request = add_ride_request()
+        if not request:
+            clear_screen(ask=False)
+            continue
+        requests.append()
 
     if action == 2:
         print_all_requests()
 
-
-
-    print("\n\n")
+    clear_screen()
 
     
