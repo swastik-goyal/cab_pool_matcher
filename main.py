@@ -1,50 +1,107 @@
+from colorama import init, Fore, Back, Style
+import sys
+import time
+from classes import Cab, RideRequest
 
-'''
-Destination:
-    0: Delhi
-    1: Jaipur
-
-When:
-    0: Morning
-    1: Afternoon
-    2: Evening
-    3: Night
-'''
-class RideRequest():
-    def __init__(self, name, destination, when, year):
-
-        if year > 5 or year < 0:
-            raise ValueError("Year can only be between 1 to 5.") 
-
-        if destination != 0 and destination != 1:
-            raise ValueError("Only two destinations are allowed.")
-
-        self.name = name
-        self.destination = destination
-        self.when = when
-        self.year = year
+init(autoreset=True)
 
 
-'''
-seats: 1 to 4
-destination and when are same as RideRequest
-students is a list of students in it
-'''
-class Cab():
-    def __init__(self, driver_name, seats, left, destination, when, students):
+def menu():
+    print(Style.BRIGHT + Fore.CYAN + "CAB POOL MATCHER")
+    print("\t1) Add new request")
+    print("\t2) See everyone still waiting and all the cabs")
+    print(Fore.RED + "\t3) Quit the app")
 
-        if len(students) > seats:
-            raise ValueError("Students should be less than seats in the cab.")
+def get_action():
+    menu()
+    action = int(input("\n\nEnter Option: "))
+    print()
 
-        if seats>4 or seats<1:
-            raise ValueError("Seats can only be from 1 to 4.")
+    if action > 3 or action < 1:
+        print(Fore.RED + "Bad Option. Select again\n")
+        action = get_action()
 
-        if destination != 0 and destination != 1:
-            raise ValueError("Only two destinations are allowed.")
 
-        self.driver_name = driver_name
-        self.seats = seats
-        self.left = left
-        self.destination = destination
-        self.when = when
-        self.students = students
+    return action
+
+def add_ride_request(retry=False):
+    if retry:
+        print("Retrying adding new request...")
+    else:
+        print(Fore.GREEN + "Adding new ride request...")
+
+    name = input("Enter name of the student: ")
+
+    print("Destinations: \n\t0: Delhi \n\t1: Jaipur")
+    destination = int(input("Enter your Destination: "))
+    print()
+
+    print("Time: \n\t0: Morning \n\t1: Afternoon \n\t2: Evening \n\t3: Night")
+    when = int(input("Pick your time: "))
+    print()
+
+    year = int(input("Enter which year student you are: "))
+    when_requested = time.time()
+
+    try:
+        request = RideRequest(name, destination, when, year, when_requested)
+        print(Fore.GREEN + "Request successfully created...")
+        return request
+    except ValueError as err:
+        print(Fore.RED + str(err))
+        return add_ride_request(retry=True)
+    except:
+        print(Fore.RED + "Something went wrong...")
+        return add_ride_request(retry=True)
+
+def print_all_requests():
+    print(Fore.LIGHTYELLOW_EX + "Printing all cab requests...")
+    print("Total requests: " , len(requests))
+    print()
+
+    for i in requests:
+        print("Name: ", i.name)
+
+        match i.destination:
+            case 0:
+                print("Destination: Delhi")
+            case 1:
+                print("Destination: Jaipur")
+
+        match i.when:
+            case 0:
+                print("Time: Morning")
+            case 1:
+                print("Time: Afternoon")
+            case 2:
+                print("Time: Evening")
+            case 3:
+                print("Time: Night")
+
+        print("Year: ", i.year)
+        print()
+
+
+
+
+requests = []
+cabs = []
+
+while True:
+    action = get_action()
+
+    if action == 3:
+        print(Fore.GREEN + Style.BRIGHT + "Quitting APP....")
+        sys.exit(0)
+
+    if action == 1:
+        requests.append(add_ride_request())
+
+    if action == 2:
+        print_all_requests()
+
+
+
+    print("\n\n")
+
+    
