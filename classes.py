@@ -1,29 +1,40 @@
 
 '''
 Destination:
-    0: Delhi
-    1: Jaipur
+    1: Delhi
+    2: Jaipur
 
 When:
-    0: Morning
-    1: Afternoon
-    2: Evening
-    3: Night
+    1: Morning
+    2: Afternoon
+    3: Evening
+    4: Night
 '''
+
 class RideRequest():
-    def __init__(self, name, destination, when, year, when_requested):
-
-        if year > 5 or year < 0:
-            raise ValueError("Year can only be between 1 to 5.") 
-
-        if destination != 0 and destination != 1:
-            raise ValueError("Only two destinations are allowed. ")
+    def __init__(self, name, when_requested, destination=None, when=None, year=None):
 
         self.name = name
         self.destination = destination
         self.when = when
         self.year = year
         self.when_requested = when_requested
+
+    def set_destination(self, destination):
+        if destination != 1 and destination != 2:
+            raise ValueError("Only two destinations are allowed. ")
+        self.destination = destination
+
+    def set_when(self, when):
+        if when > 4 or when < 1:
+            raise ValueError("Invalid time of trip")
+        self.when = when
+
+    def set_year(self, year):
+        if year > 5 or year < 1:
+            raise ValueError("Year can only be between 1 to 5.") 
+        self.year = year
+
 
 
 '''
@@ -40,7 +51,7 @@ class Cab():
         if seats>4 or seats<1:
             raise ValueError("Seats can only be from 1 to 4.")
 
-        if destination != 0 and destination != 1:
+        if destination != 1 and destination != 2:
             raise ValueError("Only two destinations are allowed.")
 
         self.driver_name = driver_name
