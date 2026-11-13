@@ -43,12 +43,14 @@ def custom_char(text=None):
 def read_cabs_from_csv(path='cabs.csv'):
     with open(path, mode='r', encoding='utf-8') as file:
         reader = csv.reader(file)
-        header = next(reader)
+        next(reader, None)
 
         cabs = []
         open_cabs = {}
 
         for row in reader:
+            if len(row) < 4:
+                continue
 
             if row[2].lower() == 'delhi':
                 row[2] = 1
@@ -73,7 +75,11 @@ def read_cabs_from_csv(path='cabs.csv'):
 
 
 
-            cab = Cab(row[0], int(row[1]), False, row[2], row[3], [])
+            try:
+                cab = Cab(row[0], int(row[1]), False, row[2], row[3], [])
+            except ValueError as err:
+                print(Fore.RED + f"Skipping bad cab row {row[0]!r}: {err}")
+                continue
 
             cabs.append(cab)
 
@@ -83,79 +89,25 @@ def read_cabs_from_csv(path='cabs.csv'):
         print(Fore.GREEN + "Successfully fetched the cabs from CSV file.")
         return (cabs, open_cabs)
 
+DEST_NAMES = {1: "Delhi", 2: "Jaipur"}
+TIME_NAMES = {1: "Morning", 2: "Afternoon", 3: "Evening", 4: "Night"}
+
+
 def print_cab(cab):
     print(Fore.YELLOW + "Driver Name: " + cab.driver_name)
-    
-    print("No of seats: ", cab.seats)
-
-    if cab.left:
-        print("Status: Already left")
-    else:
-        print("Status: Open")
-
-    match cab.destination:
-        case 1:
-            print("Destination: Delhi")
-        case 2:
-            print("Destination: Jaipur")
-
-    match cab.when:
-        case 1:
-            print("Time: Morning")
-        case 2:
-            print("Time: Afternoon")
-        case 3:
-            print("Time: Evening")
-        case 4:
-            print("Time: Night")
-    
+    print(f"Seats: {len(cab.students)}/{cab.seats}")
+    print("Status: " + ("Already left" if cab.left else "Open"))
+    print("Destination:", DEST_NAMES[cab.destination])
+    print("Time:", TIME_NAMES[cab.when])
+    if cab.students:
+        print("Passengers:", ", ".join(f"{s.name} (Y{s.year})" for s in cab.students))
     print()
 
+
 def print_request(request, fore_color_heading=Fore.YELLOW, spacing=False):
-
-    if spacing:
-        print('\t' + fore_color_heading + "Name: " + request.name)
-            
-        match request.destination:
-            case 1:
-                print('\t' + "Destination: Delhi")
-            case 2:
-                print('\t' + "Destination: Jaipur")
-    
-    
-        match request.when:
-            case 1:
-                print('\t' + "Time: Morning")
-            case 2:
-                print('\t' + "Time: Afternoon")
-            case 3:
-                print('\t' + "Time: Evening")
-            case 4:
-                print('\t' + "Time: Night")
-    
-        print('\t' + "Year: ", request.year)
-        print()
-
-    else:
-
-        print(fore_color_heading + "Name: " + request.name)
-        
-        match request.destination:
-            case 1:
-                print("Destination: Delhi")
-            case 2:
-                print("Destination: Jaipur")
-
-
-        match request.when:
-            case 1:
-                print("Time: Morning")
-            case 2:
-                print("Time: Afternoon")
-            case 3:
-                print("Time: Evening")
-            case 4:
-                print("Time: Night")
-
-        print("Year: ", request.year)
-        print()
+    p = '\t' if spacing else ''
+    print(p + fore_color_heading + "Name: " + request.name)
+    print(p + "Destination:", DEST_NAMES[request.destination])
+    print(p + "Time:", TIME_NAMES[request.when])
+    print(p + "Year:", request.year)
+    print()

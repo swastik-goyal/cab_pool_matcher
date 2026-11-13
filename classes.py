@@ -45,11 +45,11 @@ students is a list of students in it
 class Cab():
     def __init__(self, driver_name, seats, left, destination, when, students):
 
-        if len(students) > seats:
-            raise ValueError("Students should be less than seats in the cab.")
-
         if seats>4 or seats<1:
             raise ValueError("Seats can only be from 1 to 4.")
+
+        if len(students) > seats:
+            raise ValueError("Students should be less than seats in the cab.")
 
         if destination != 1 and destination != 2:
             raise ValueError("Only two destinations are allowed.")
@@ -60,3 +60,6 @@ class Cab():
         self.destination = destination
         self.when = when
         self.students = students
+
+    def free_seats(self):
+        return self.seats - len(self.students)
