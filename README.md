@@ -33,4 +33,4 @@ State is saved to `state.json` after every change (and on quit), so Ctrl+C loses
    - add one request: O(log n) heap push. All 1000: O(n log n).
    - dispatch one cab (up to 4 students): O(k log n) with k <= 4, so O(log n). The cab is taken from the front of a deque in O(1).
    - find open cab for a trip: O(1), open cabs are kept in a dict keyed by (destination, time) with a deque per trip.
-   - preview is O(m log n) for m open seats of a trip, it only reads the heap.
+   - preview: for each open cab, O(s log n) for its s seats (s <= 4), it only reads the heap. Every open cab of a trip shows the same top students, because whichever cab leaves first takes them.

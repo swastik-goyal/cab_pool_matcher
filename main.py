@@ -163,14 +163,10 @@ def preview_all_open_cabs():
     for key, dq in open_cabs.items():
         if not dq:
             continue
-        total = sum(c.free_seats() for c in dq)
-        ordered = [r for _, _, _, r in heapq.nsmallest(total, requests.get(key, []))]
-        pos = 0
         for cab in dq:
             found_cab = True
             print_cab(cab)
-            picks = ordered[pos:pos + cab.free_seats()]
-            pos += len(picks)
+            picks = [r for _, _, _, r in heapq.nsmallest(cab.free_seats(), requests.get(key, []))]
             if not picks:
                 print(Fore.YELLOW + "\tNo one waiting for this cab.\n")
             for request in picks:
